@@ -1,0 +1,57 @@
+---
+title: "566 Homework 2 Matt Houtz"
+author: "Matt Houtz"
+output: html_document
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+---
+
+```{r, echo=FALSE, warning=FALSE}
+library(dplyr)
+library(car)
+library(plotly)
+library(ggplot2)
+library(ggthemes)
+library(htmlwidgets)
+```
+
+
+```{r}
+pl <- read.csv("C:/Users/matth/Documents/Grad School/Spring 2022/STAA 566/Data/pl_table_05_20.csv")
+table(pl$Squad)
+
+#Filter to only keep teams that played in the Premiere League for all 16 seasons
+pl.best <- subset(pl, Squad %in% c("Arsenal", "Everton", "Chelsea", "Manchester City", "Liverpool", "Manchester Utd", "Tottenham"))
+
+#Remove columns that have no data
+pl.best <- pl.best[,1:11]
+
+#Highlight by squad
+pl.highlight <- highlight_key(pl.best, ~Squad)
+
+#Making GGplot object
+pl.gg <- ggplot(data = pl.highlight,
+                mapping = aes(x = Year,
+                              y = GD,
+                              color = Squad)) + 
+  geom_point(aes(),
+             alpha = 1,
+             shape = 20, size = 1.5) +
+  geom_smooth(method = "loess", se = FALSE) +
+  ylab("Goal Difference (Goals for minus goals against)") +
+  scale_y_continuous(breaks = seq(-20, 80, by = 20)) + 
+  theme_classic(base_size = 12) +
+  theme(legend.position = c(0.87, 0.25)) + 
+  ggtitle("Goal Difference by year of Seven Premier League Teams")
+
+pl.plotly.highlight <- ggplotly(pl.gg, tooltip = c("Squad", "GD")) %>%
+  highlight(on = "plotly_hover",
+            off = "plotly_relayout")
+
+pl.plotly.highlight
+```
+
+
