@@ -29,14 +29,18 @@ pl.best <- subset(pl, Squad %in% c("Arsenal", "Everton", "Chelsea", "Manchester 
 #Remove columns that have no data
 pl.best <- pl.best[,1:11]
 
+#Rename 2 columns to make them more descriptive
+names(pl.best)[names(pl.best) == 'GD'] <- 'Goal.Difference'
+names(pl.best)[names(pl.best) == 'Rk'] <- 'End.of.Season.Rank'
+
 #Highlight by squad when hovering
 pl.highlight <- highlight_key(pl.best, ~Squad)
 
 #Making GGplot object
 pl.gg <- ggplot(data = pl.highlight,
                 mapping = aes(x = Year,
-                              y = GD,
-                              text = Rk,
+                              y = Goal.Difference,
+                              label = End.of.Season.Rank,
                               color = Squad)) + 
   geom_point(aes(),
              alpha = 1,
@@ -46,10 +50,10 @@ pl.gg <- ggplot(data = pl.highlight,
   scale_y_continuous(breaks = seq(-20, 80, by = 20)) + 
   theme_classic(base_size = 12) +
   theme(legend.position = c(0.87, 0.25)) + 
-  ggtitle("Goal Difference of Seven Premier League Teams")
+  labs(title = "Goal Difference of Seven Premiere League Teams")
 
 #Create plotly object
-pl.plotly.highlight <- ggplotly(pl.gg, tooltip = c("Squad", "GD", "Rk")) %>%
+pl.plotly.highlight <- ggplotly(pl.gg, tooltip = c("Squad", "Goal.Difference", "End.of.Season.Rank")) %>%
   highlight(on = "plotly_hover",
             off = "plotly_relayout")
 
